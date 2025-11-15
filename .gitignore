@@ -1,0 +1,37 @@
+# Dependencies
+node_modules/
+target/
+.DS_Store
+
+# IDL
+target/idl/
+target/types/
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Environment variables
+.env
+.env.local
+
+# Test validator
+.test-ledger/
+
+# Build outputs
+lib/
+dist/
+*.wasm
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+Thumbs.db
+
