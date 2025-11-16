@@ -1,20 +1,20 @@
-# Rust
-target/
-**/*.rs.bk
-Cargo.lock
+# Node modules
+/node_modules
 
-# Anchor
-.anchor/
-test-ledger/
-*.keypair
+# Compilation output
+/dist
 
-# IDL (will be generated)
-target/idl/
+# pnpm deploy output
+/bundle
 
-# Node
-node_modules/
+# Hardhat Build Artifacts
+/artifacts
 
-# Environment
-.env
-.env.local
+# Hardhat compilation (v2) support directory
+/cache
 
+# Typechain output
+/types
+
+# Hardhat coverage reports
+/coverage

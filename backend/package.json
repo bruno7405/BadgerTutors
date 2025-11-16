@@ -1,30 +1,28 @@
 {
-  "name": "badger-tutors-backend",
-  "version": "0.1.0",
-  "description": "Solana smart contract backend for BadgerTutors",
-  "main": "lib/index.js",
+  "name": "solidity-test",
+  "version": "1.0.0",
+  "main": "index.js",
   "scripts": {
-    "build": "anchor build",
-    "test": "anchor test --skip-local-validator",
-    "deploy": "anchor deploy",
-    "deploy:devnet": "anchor deploy --provider.cluster devnet",
-    "deploy:mainnet": "anchor deploy --provider.cluster mainnet-beta"
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": [
-    "solana",
-    "anchor",
-    "smart-contract",
-    "escrow"
-  ],
+  "keywords": [],
   "author": "",
-  "license": "MIT",
-  "dependencies": {
-    "@coral-xyz/anchor": "^0.30.1",
-    "@solana/web3.js": "^1.95.2"
-  },
+  "license": "ISC",
+  "description": "",
   "devDependencies": {
-    "@types/node": "^22.16.5",
-    "typescript": "^5.8.3"
-  }
+    "@nomicfoundation/hardhat-ethers": "^4.0.3",
+    "@nomicfoundation/hardhat-ignition": "^3.0.5",
+    "@nomicfoundation/hardhat-toolbox-mocha-ethers": "^3.0.1",
+    "@types/chai": "^4.3.20",
+    "@types/chai-as-promised": "^8.0.2",
+    "@types/mocha": "^10.0.10",
+    "@types/node": "^22.19.1",
+    "chai": "^5.3.3",
+    "ethers": "^6.15.0",
+    "forge-std": "github:foundry-rs/forge-std#v1.9.4",
+    "hardhat": "^3.0.15",
+    "mocha": "^11.7.5",
+    "typescript": "~5.8.0"
+  },
+  "type": "module"
 }
-
