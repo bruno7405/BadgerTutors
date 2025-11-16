@@ -1,0 +1,1 @@
+C:\Users\bruno\OneDrive\Documentos\GitHub\BadgerTutors\badger-tutor-backend\target\debug\libBadgerTutorBackend.rlib: C:\Users\bruno\OneDrive\Documentos\GitHub\BadgerTutors\badger-tutor-backend\src\lib.rs

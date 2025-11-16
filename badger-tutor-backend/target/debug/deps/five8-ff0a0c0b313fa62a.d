@@ -1,0 +1,11 @@
+C:\Users\bruno\OneDrive\Documentos\GitHub\BadgerTutors\badger-tutor-backend\target\debug\deps\five8-ff0a0c0b313fa62a.d: C:\Users\bruno\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\five8-1.0.0\src\lib.rs C:\Users\bruno\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\five8-1.0.0\src\decode.rs C:\Users\bruno\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\five8-1.0.0\src\encode.rs C:\Users\bruno\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\five8-1.0.0\src\unlikely.rs C:\Users\bruno\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\five8-1.0.0\src\../README.md
+
+C:\Users\bruno\OneDrive\Documentos\GitHub\BadgerTutors\badger-tutor-backend\target\debug\deps\libfive8-ff0a0c0b313fa62a.rlib: C:\Users\bruno\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\five8-1.0.0\src\lib.rs C:\Users\bruno\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\five8-1.0.0\src\decode.rs C:\Users\bruno\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\five8-1.0.0\src\encode.rs C:\Users\bruno\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\five8-1.0.0\src\unlikely.rs C:\Users\bruno\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\five8-1.0.0\src\../README.md
+
+C:\Users\bruno\OneDrive\Documentos\GitHub\BadgerTutors\badger-tutor-backend\target\debug\deps\libfive8-ff0a0c0b313fa62a.rmeta: C:\Users\bruno\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\five8-1.0.0\src\lib.rs C:\Users\bruno\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\five8-1.0.0\src\decode.rs C:\Users\bruno\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\five8-1.0.0\src\encode.rs C:\Users\bruno\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\five8-1.0.0\src\unlikely.rs C:\Users\bruno\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\five8-1.0.0\src\../README.md
+
+C:\Users\bruno\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\five8-1.0.0\src\lib.rs:
+C:\Users\bruno\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\five8-1.0.0\src\decode.rs:
+C:\Users\bruno\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\five8-1.0.0\src\encode.rs:
+C:\Users\bruno\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\five8-1.0.0\src\unlikely.rs:
+C:\Users\bruno\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\five8-1.0.0\src\../README.md:
