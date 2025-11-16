@@ -1,0 +1,36 @@
+# Build artifacts
+target/
+**/target/
+
+# Node modules (if you have frontend/JS tests)
+node_modules/
+**/node_modules/
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Git
+.git/
+.gitignore
+
+# Rust (keep Cargo.lock for reproducible builds)
+
+# Anchor build artifacts
+.anchor/
+**/.anchor/
+
+# Test artifacts
+coverage/
+.nyc_output/
+
+# Logs
+*.log
+

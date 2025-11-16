@@ -1,113 +1,166 @@
-# BadgerTutors
+# Student Registry Smart Contract
 
-A Solana-based marketplace for tutors and students with school ID verification.
+A Solana smart contract built with Anchor that manages student registration and login using student ID, email, and crypto wallet key.
 
 ## Features
 
-- **User Registration**: Store user information (students and tutors) with school ID verification
-- **One Account Per Person**: Ensures only one person per account using school ID verification
-- **Transaction Processing**: Handle transactions using smart contract data
+- **Unique Student ID**: Validates and ensures 10-digit student IDs are unique
+- **Unique Email**: Ensures each email address can only be registered once
+- **Unique Wallet Key**: Prevents the same wallet from registering multiple accounts
+- **Secure Login**: Verifies student credentials (ID, email, and wallet signature)
 
-## Tech Stack
+## How It Works
 
-- **Solana Blockchain**: Smart contracts for decentralized marketplace
-- **Anchor Framework**: Solana development framework
-- **Rust**: Solana program language
-- **TypeScript**: Client-side interactions
+The contract uses **Program Derived Addresses (PDAs)** to implement hash map-like functionality for ensuring uniqueness:
 
-## Quick Start
+1. **Student ID Uniqueness**: Creates a PDA with seed `["student_id", student_id]` - if this PDA already exists, registration fails
+2. **Email Uniqueness**: Creates a PDA with seed `["email", email]` - if this PDA already exists, registration fails
+3. **Wallet Uniqueness**: Creates a PDA with seed `["wallet", wallet_pubkey]` - if this PDA already exists, registration fails
 
-### Prerequisites
+Each PDA acts as a hash map entry - if it exists, the value is already taken.
 
-Before you begin, ensure you have the following installed:
+## Program Instructions
 
-1. **Rust** - [Install Rust](https://rustup.rs/)
-2. **Solana CLI** - [Install Solana](https://docs.solana.com/cli/install-solana-cli-tools)
-3. **Anchor Framework** - [Install Anchor](https://www.anchor-lang.com/docs/installation)
-4. **Node.js** (v16+) and Yarn
+### `initialize`
 
-### Setup
+Initializes the student registry. Must be called once before any registrations.
 
-1. **Run the setup script** (Windows PowerShell):
+**Accounts:**
 
-   ```powershell
-   .\setup.ps1
-   ```
+- `registry`: The main registry account (PDA)
+- `authority`: The account that will own the registry
+- `system_program`: Solana System Program
 
-2. **Or follow manual setup**:
-   - **Windows users**: See [INSTALL_WINDOWS.md](./INSTALL_WINDOWS.md) for step-by-step Windows installation
-   - **All platforms**: See [SETUP.md](./SETUP.md) for general installation instructions
+### `register_student`
 
-3. **Install dependencies**:
+Registers a new student with their 10-digit student ID, email, and wallet key.
 
-   ```bash
-   cd client
-   yarn install
-   cd ..
-   ```
+**Parameters:**
 
-4. **Build the program**:
+- `student_id`: String - Must be exactly 10 digits
+- `email`: String - Must contain '@wisc.edu' to ensure it is a valid university email
 
-   ```bash
-   anchor build
-   ```
+**Accounts:**
 
-5. **Start local validator** (in a separate terminal):
+- `registry`: The main registry account
+- `student_account`: The student's data account (PDA)
+- `student_id_uniqueness`: PDA marker for student ID uniqueness
+- `email_uniqueness`: PDA marker for email uniqueness
+- `wallet_uniqueness`: PDA marker for wallet uniqueness
+- `user`: The signing wallet (used as wallet_key)
+- `system_program`: Solana System Program
 
-   ```bash
-   solana-test-validator
-   ```
+**Validation:**
 
-6. **Deploy to localnet**:
-   ```bash
-   anchor deploy
-   ```
+- Student ID must be exactly 10 digits
+- Email must contain '@wisc.edu'
+- Student ID must be unique
+- Email must be unique
+- Wallet key must be unique
 
-## Project Structure
+### `login_student`
 
-```
-BadgerTutors/
-├── Anchor.toml              # Anchor configuration
-├── Cargo.toml               # Rust workspace config
-├── programs/
-│   └── badger-tutors/       # Solana program (smart contract)
-│       ├── Cargo.toml
-│       └── src/
-│           └── lib.rs       # Main program logic
-├── client/                  # TypeScript client
-│   ├── package.json
-│   ├── tsconfig.json
-│   └── src/
-│       └── index.ts         # Client implementation
-└── tests/                   # Integration tests
-```
+Verifies student credentials for login.
 
-## Development
+**Parameters:**
 
-### Build
+- `student_id`: String - The student's 10-digit ID
+- `email`: String - The student's email
+
+**Accounts:**
+
+- `registry`: The main registry account
+- `student_account`: The student's data account (PDA)
+- `user`: The signing wallet (must match registered wallet_key)
+
+**Validation:**
+
+- Student ID must match registered ID
+- Email must match registered email
+- Signing wallet must match registered wallet_key
+
+## Setup
+
+1. Install Anchor: https://www.anchor-lang.com/docs/installation
+
+2. Build the program:
 
 ```bash
 anchor build
 ```
 
-### Test
-
-```bash
-anchor test
-```
-
-### Deploy
+3. Deploy to localnet:
 
 ```bash
 anchor deploy
 ```
 
-## Documentation
+## Usage Example
 
-- [Setup Guide](./SETUP.md) - Detailed installation and setup instructions
-- [Solana Docs](https://docs.solana.com/)
-- [Anchor Docs](https://www.anchor-lang.com/)
+### TypeScript/JavaScript Client
 
-## License
+```typescript
+import * as anchor from "@coral-xyz/anchor";
+import { Program } from "@coral-xyz/anchor";
+import { StudentRegistry } from "./target/types/student_registry";
 
-MIT
+// Initialize
+await program.methods
+  .initialize()
+  .accounts({
+    registry: registryPda,
+    authority: provider.wallet.publicKey,
+    systemProgram: anchor.web3.SystemProgram.programId,
+  })
+  .rpc();
+
+// Register Student
+await program.methods
+  .registerStudent("1234567890", "student@university.edu")
+  .accounts({
+    registry: registryPda,
+    studentAccount: studentAccountPda,
+    studentIdUniqueness: studentIdUniquenessPda,
+    emailUniqueness: emailUniquenessPda,
+    walletUniqueness: walletUniquenessPda,
+    user: provider.wallet.publicKey,
+    systemProgram: anchor.web3.SystemProgram.programId,
+  })
+  .rpc();
+
+// Login
+await program.methods
+  .loginStudent("1234567890", "student@university.edu")
+  .accounts({
+    registry: registryPda,
+    studentAccount: studentAccountPda,
+    user: provider.wallet.publicKey,
+  })
+  .rpc();
+```
+
+## Account Structure
+
+### StudentRegistry
+
+- `authority`: Pubkey - The authority that can manage the registry
+- `total_users`: u64 - Total number of registered students
+- `bump`: u8 - PDA bump seed
+
+### StudentAccount
+
+- `student_id`: String - 10-digit student ID
+- `email`: String - Student email address
+- `wallet_key`: Pubkey - The student's wallet public key
+- `registered_at`: i64 - Unix timestamp of registration
+- `bump`: u8 - PDA bump seed
+
+## Error Codes
+
+- `InvalidStudentId`: Student ID is not exactly 10 digits
+- `InvalidEmail`: Email format is invalid
+- `StudentIdAlreadyExists`: Student ID is already registered
+- `EmailAlreadyExists`: Email is already registered
+- `WalletAlreadyExists`: Wallet key is already registered
+- `InvalidCredentials`: Student ID or email doesn't match
+- `InvalidWallet`: Wallet key doesn't match registered wallet
