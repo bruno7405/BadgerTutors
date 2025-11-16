@@ -1,166 +1,73 @@
-# Student Registry Smart Contract
+# Welcome to your Lovable project
 
-A Solana smart contract built with Anchor that manages student registration and login using student ID, email, and crypto wallet key.
+## Project info
 
-## Features
+**URL**: https://lovable.dev/projects/80a4218e-ae12-440b-9bac-91e100a8dcf3
 
-- **Unique Student ID**: Validates and ensures 10-digit student IDs are unique
-- **Unique Email**: Ensures each email address can only be registered once
-- **Unique Wallet Key**: Prevents the same wallet from registering multiple accounts
-- **Secure Login**: Verifies student credentials (ID, email, and wallet signature)
+## How can I edit this code?
 
-## How It Works
+There are several ways of editing your application.
 
-The contract uses **Program Derived Addresses (PDAs)** to implement hash map-like functionality for ensuring uniqueness:
+**Use Lovable**
 
-1. **Student ID Uniqueness**: Creates a PDA with seed `["student_id", student_id]` - if this PDA already exists, registration fails
-2. **Email Uniqueness**: Creates a PDA with seed `["email", email]` - if this PDA already exists, registration fails
-3. **Wallet Uniqueness**: Creates a PDA with seed `["wallet", wallet_pubkey]` - if this PDA already exists, registration fails
+Simply visit the [Lovable Project](https://lovable.dev/projects/80a4218e-ae12-440b-9bac-91e100a8dcf3) and start prompting.
 
-Each PDA acts as a hash map entry - if it exists, the value is already taken.
+Changes made via Lovable will be committed automatically to this repo.
 
-## Program Instructions
+**Use your preferred IDE**
 
-### `initialize`
+If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
 
-Initializes the student registry. Must be called once before any registrations.
+The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
 
-**Accounts:**
+Follow these steps:
 
-- `registry`: The main registry account (PDA)
-- `authority`: The account that will own the registry
-- `system_program`: Solana System Program
+```sh
+# Step 1: Clone the repository using the project's Git URL.
+git clone <YOUR_GIT_URL>
 
-### `register_student`
+# Step 2: Navigate to the project directory.
+cd <YOUR_PROJECT_NAME>
 
-Registers a new student with their 10-digit student ID, email, and wallet key.
+# Step 3: Install the necessary dependencies.
+npm i
 
-**Parameters:**
-
-- `student_id`: String - Must be exactly 10 digits
-- `email`: String - Must contain '@wisc.edu' to ensure it is a valid university email
-
-**Accounts:**
-
-- `registry`: The main registry account
-- `student_account`: The student's data account (PDA)
-- `student_id_uniqueness`: PDA marker for student ID uniqueness
-- `email_uniqueness`: PDA marker for email uniqueness
-- `wallet_uniqueness`: PDA marker for wallet uniqueness
-- `user`: The signing wallet (used as wallet_key)
-- `system_program`: Solana System Program
-
-**Validation:**
-
-- Student ID must be exactly 10 digits
-- Email must contain '@wisc.edu'
-- Student ID must be unique
-- Email must be unique
-- Wallet key must be unique
-
-### `login_student`
-
-Verifies student credentials for login.
-
-**Parameters:**
-
-- `student_id`: String - The student's 10-digit ID
-- `email`: String - The student's email
-
-**Accounts:**
-
-- `registry`: The main registry account
-- `student_account`: The student's data account (PDA)
-- `user`: The signing wallet (must match registered wallet_key)
-
-**Validation:**
-
-- Student ID must match registered ID
-- Email must match registered email
-- Signing wallet must match registered wallet_key
-
-## Setup
-
-1. Install Anchor: https://www.anchor-lang.com/docs/installation
-
-2. Build the program:
-
-```bash
-anchor build
+# Step 4: Start the development server with auto-reloading and an instant preview.
+npm run dev
 ```
 
-3. Deploy to localnet:
+**Edit a file directly in GitHub**
 
-```bash
-anchor deploy
-```
+- Navigate to the desired file(s).
+- Click the "Edit" button (pencil icon) at the top right of the file view.
+- Make your changes and commit the changes.
 
-## Usage Example
+**Use GitHub Codespaces**
 
-### TypeScript/JavaScript Client
+- Navigate to the main page of your repository.
+- Click on the "Code" button (green button) near the top right.
+- Select the "Codespaces" tab.
+- Click on "New codespace" to launch a new Codespace environment.
+- Edit files directly within the Codespace and commit and push your changes once you're done.
 
-```typescript
-import * as anchor from "@coral-xyz/anchor";
-import { Program } from "@coral-xyz/anchor";
-import { StudentRegistry } from "./target/types/student_registry";
+## What technologies are used for this project?
 
-// Initialize
-await program.methods
-  .initialize()
-  .accounts({
-    registry: registryPda,
-    authority: provider.wallet.publicKey,
-    systemProgram: anchor.web3.SystemProgram.programId,
-  })
-  .rpc();
+This project is built with:
 
-// Register Student
-await program.methods
-  .registerStudent("1234567890", "student@university.edu")
-  .accounts({
-    registry: registryPda,
-    studentAccount: studentAccountPda,
-    studentIdUniqueness: studentIdUniquenessPda,
-    emailUniqueness: emailUniquenessPda,
-    walletUniqueness: walletUniquenessPda,
-    user: provider.wallet.publicKey,
-    systemProgram: anchor.web3.SystemProgram.programId,
-  })
-  .rpc();
+- Vite
+- TypeScript
+- React
+- shadcn-ui
+- Tailwind CSS
 
-// Login
-await program.methods
-  .loginStudent("1234567890", "student@university.edu")
-  .accounts({
-    registry: registryPda,
-    studentAccount: studentAccountPda,
-    user: provider.wallet.publicKey,
-  })
-  .rpc();
-```
+## How can I deploy this project?
 
-## Account Structure
+Simply open [Lovable](https://lovable.dev/projects/80a4218e-ae12-440b-9bac-91e100a8dcf3) and click on Share -> Publish.
 
-### StudentRegistry
+## Can I connect a custom domain to my Lovable project?
 
-- `authority`: Pubkey - The authority that can manage the registry
-- `total_users`: u64 - Total number of registered students
-- `bump`: u8 - PDA bump seed
+Yes, you can!
 
-### StudentAccount
+To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
 
-- `student_id`: String - 10-digit student ID
-- `email`: String - Student email address
-- `wallet_key`: Pubkey - The student's wallet public key
-- `registered_at`: i64 - Unix timestamp of registration
-- `bump`: u8 - PDA bump seed
-
-## Error Codes
-
-- `InvalidStudentId`: Student ID is not exactly 10 digits
-- `InvalidEmail`: Email format is invalid
-- `StudentIdAlreadyExists`: Student ID is already registered
-- `EmailAlreadyExists`: Email is already registered
-- `WalletAlreadyExists`: Wallet key is already registered
-- `InvalidCredentials`: Student ID or email doesn't match
-- `InvalidWallet`: Wallet key doesn't match registered wallet
+Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
