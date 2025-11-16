@@ -1,0 +1,42 @@
+{
+  "_format": "hh3-sol-build-info-1",
+  "id": "solc-0_8_28-b680486ae599fc3bdd6296b4344c4ff8ac869258",
+  "solcVersion": "0.8.28",
+  "solcLongVersion": "0.8.28+commit.7893614a",
+  "userSourceNameMap": {
+    "contracts/TutorManager.sol": "project/contracts/TutorManager.sol"
+  },
+  "input": {
+    "language": "Solidity",
+    "settings": {
+      "evmVersion": "cancun",
+      "optimizer": {
+        "enabled": true,
+        "runs": 200
+      },
+      "outputSelection": {
+        "*": {
+          "": [
+            "ast"
+          ],
+          "*": [
+            "abi",
+            "evm.bytecode",
+            "evm.deployedBytecode",
+            "evm.methodIdentifiers",
+            "metadata"
+          ]
+        }
+      },
+      "remappings": []
+    },
+    "sources": {
+      "project/contracts/TutorManager.sol": {
+        "content": "// SPDX-License-Identifier: MIT\r\npragma solidity ^0.8.20;\r\n\r\nimport \"./TutorSession.sol\";\r\n\r\ncontract TutorManager {\r\n    struct Review {\r\n        address reviewer;\r\n        uint8 rating;\r\n        string comment;\r\n    }\r\n\r\n    struct TutorProfile {\r\n        bool registered;\r\n        uint256 sessionPrice;\r\n        Review[] reviews;\r\n        mapping(address => bool) hasReviewed;\r\n    }\r\n\r\n    mapping(address => TutorProfile) public tutors;\r\n    TutorSession[] public sessions;\r\n\r\n    // Tutor registers and sets price\r\n    function registerTutor(uint256 price) external {\r\n        tutors[msg.sender].registered = true;\r\n        tutors[msg.sender].sessionPrice = price;\r\n    }\r\n\r\n    // Student creates a session with a tutor\r\n    function createSession(address tutorAddr) external returns (address) {\r\n        require(tutors[tutorAddr].registered, \"Tutor not found\");\r\n\r\n        TutorSession session = new TutorSession(\r\n            tutorAddr,\r\n            msg.sender,\r\n            tutors[tutorAddr].sessionPrice\r\n        );\r\n\r\n        sessions.push(session);\r\n        return address(session);\r\n    }\r\n\r\n    // Student leaves 1 review max per tutor\r\n    function leaveReview(\r\n        address tutorAddr,\r\n        uint8 rating,\r\n        string calldata comment\r\n    ) external {\r\n        TutorProfile storage t = tutors[tutorAddr];\r\n        require(t.registered, \"Tutor not found\");\r\n        require(!t.hasReviewed[msg.sender], \"Already reviewed\");\r\n        require(rating >= 1 && rating <= 5, \"Rating\");\r\n\r\n        t.reviews.push(Review(msg.sender, rating, comment));\r\n        t.hasReviewed[msg.sender] = true;\r\n    }\r\n\r\n    // Fetch all reviews\r\n    function getReviews(address tutorAddr)\r\n        external\r\n        view\r\n        returns (Review[] memory)\r\n    {\r\n        return tutors[tutorAddr].reviews;\r\n    }\r\n}\r\n"
+      },
+      "project/contracts/TutorSession.sol": {
+        "content": "// SPDX-License-Identifier: MIT\r\npragma solidity ^0.8.20;\r\n\r\ncontract TutorSession {\r\n    address public tutor;\r\n    address public student;\r\n    uint256 public price;\r\n\r\n    bool public studentConfirmed;\r\n    bool public tutorConfirmed;\r\n    bool public isPaid;\r\n\r\n    constructor(address _tutor, address _student, uint256 _price) {\r\n        tutor = _tutor;\r\n        student = _student;\r\n        price = _price;\r\n    }\r\n\r\n    // Student deposits the session payment\r\n    function payForSession() external payable {\r\n        require(msg.sender == student, \"Only student can pay\");\r\n        require(!isPaid, \"Already paid\");\r\n        require(msg.value == price, \"Incorrect amount\");\r\n\r\n        isPaid = true;\r\n    }\r\n\r\n    // Tutor or student confirm the session is complete\r\n    function confirmSessionComplete() external {\r\n        require(msg.sender == tutor || msg.sender == student, \"Not authorized\");\r\n        require(isPaid, \"Payment not made yet\");\r\n\r\n        if (msg.sender == tutor) tutorConfirmed = true;\r\n        if (msg.sender == student) studentConfirmed = true;\r\n\r\n        // Release funds once BOTH confirm\r\n        if (tutorConfirmed && studentConfirmed) {\r\n            payable(tutor).transfer(price);\r\n        }\r\n    }\r\n}\r\n"
+      }
+    }
+  }
+}
