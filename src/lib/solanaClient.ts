@@ -2,17 +2,32 @@
  * Solana Student Registry Integration
  * This file contains stubs for Solana smart contract interactions.
  * In production, these would connect to an actual Solana program.
+ *
+ * SECURITY:
+ * - Never stores raw emails or student IDs on-chain
+ * - All PII is hashed before blockchain storage
+ * - Uses SHA-256 with salt for deterministic hashing
  */
+
+import {
+  generateUserIdHash,
+  generateStudentIdHash,
+  generateRegistryHash,
+  hashHexToBytes,
+} from './hashingUtils';
 
 export interface RegistryInitResult {
   success: boolean;
   message: string;
+  onChainHash?: string; // Hash of the data stored on-chain
 }
 
 export interface StudentRegistration {
-  studentId: string;
-  email: string;
-  walletPublicKey: string;
+  studentId: string; // Raw student ID (validated, never sent to blockchain)
+  email: string; // Raw email (validated, never sent to blockchain)
+  walletPublicKey: string; // Public key (safe to store on-chain)
+  emailHash?: string; // Hashed email (sent to blockchain)
+  registryHash?: string; // Combined hash (sent to blockchain)
 }
 
 /**
@@ -30,6 +45,10 @@ export async function initializeRegistry(): Promise<RegistryInitResult> {
 
 /**
  * Register a new student in the registry
+ *
+ * SECURITY: This function hashes all PII before sending to blockchain
+ * - Raw email/student ID only used for validation
+ * - Only hashes and wallet address go on-chain
  */
 export async function registerStudent(
   studentId: string,
@@ -52,8 +71,27 @@ export async function registerStudent(
     };
   }
 
+  // SECURITY: Hash PII before sending to blockchain
+  const emailHash = await generateUserIdHash(email);
+  const studentIdHash = await generateStudentIdHash(studentId);
+  const registryHash = await generateRegistryHash(email, studentId);
+
+  console.log("🔐 Security: Hashing student data for on-chain storage", {
+    emailHash: emailHash.substring(0, 16) + "...",
+    studentIdHash: studentIdHash.substring(0, 16) + "...",
+    registryHash: registryHash.substring(0, 16) + "...",
+    note: "Raw email/student ID NEVER sent to blockchain"
+  });
+
   // Simulate network delay
   await new Promise((resolve) => setTimeout(resolve, 1500));
+
+  // In production, send to Solana smart contract:
+  // const tx = await program.methods.registerStudent(
+  //   hashHexToBytes(emailHash),
+  //   hashHexToBytes(registryHash),
+  //   new PublicKey(walletPublicKey)
+  // ).rpc();
 
   // Mock validation - check if student ID already exists (random chance)
   if (Math.random() < 0.1) {
@@ -74,6 +112,7 @@ export async function registerStudent(
   return {
     success: true,
     message: "Successfully registered with BadgerTutors Registry",
+    onChainHash: registryHash.substring(0, 16) + "...", // Return partial hash for confirmation
   };
 }
 
